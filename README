@@ -1,0 +1,42 @@
+Audio-Daemon-MPG321 version 0.001
+=================================
+
+Audio::Daemon::MPG321 is a frontend to Audio::Play::MPG321 and its main
+objective is to provide the framework for building a song queue. You'll need
+Audio::Play::MPG321 and all of its dependencies satisfied, of course.
+
+I will be releasing a frontend to this module that is designed to be a
+full-blown music player for the end-user. It will be able to construct and
+dynamically manage multiple song queues at once. It's quite useful. Please keep
+an eye out for it.
+
+Please read the POD documentation contained within the module. Pay close
+attention to the synopsis and the loop that you must run. Also, send fixes,
+comments, and suggestions to <scarlino@bellsouth.net>. Have fun!
+
+INSTALLATION
+
+To install this module, type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+(But you really shouldn't have to if you had any sense and were using an
+automated CPAN tool for installation.)
+
+DEPENDENCIES
+
+  Audio::Daemon::MPG321 needs Audio::Play::MPG321. Go ahead and use version
+  0.003 or above.
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2005 by Da-Breegster
+
+This module is Free software under the GNU GPL license, version 2. Redistribute 
+it, modify it in any way you like, and please send patches, comments,
+improvements, and flames to <scarlino@bellsouth.net>. MPG321, which this module
+indirectly relies on, is also free software under the GNU GPL, version 2 or
+later.

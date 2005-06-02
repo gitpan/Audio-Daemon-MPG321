@@ -1,0 +1,7 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Audio-Daemon-MPG321.t
+lib/Audio/Daemon/MPG321.pm
+META.yml                                 Module meta-data (added by MakeMaker)
