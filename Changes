@@ -1,4 +1,9 @@
 Revision history for Perl extension Audio::Daemon::MPG321.
 
-0.01  Wed Jun  1 23:34:13 2005
+0.01  Wed Jun 01 23:34:13 2005
 	- The original version. It seems to be pretty stable.
+
+0.02  Sat Jun 11 20:08:05 2005
+	- I rewrote the module with tabbed indention for style. Plus I added the
+	  insert method for when you want to play a song when the current one
+	  finishes, but you're not at the end of the queue.

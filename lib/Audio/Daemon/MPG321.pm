@@ -1,4 +1,3 @@
-#!/usr/bin/perl
 #########################
 # Audio::Daemon::MPG321 #
 #    By Da-Breegster    #
@@ -10,89 +9,89 @@ use strict;
 use warnings;
 use Audio::Play::MPG321;
 use 5.006;
-our $VERSION = 0.001;
+our $VERSION = 0.002;
 
 sub new {
- my $class = shift;
- my @songs = @_;
- my $self = {
-  player => new Audio::Play::MPG321,
-  queue => [@songs],
-  pointer => 0,
- };
- bless $self, $class;
- $self->load();
- return $self;
+	my $class = shift;
+	my @songs = @_;
+	my $self = {
+		player => new Audio::Play::MPG321,
+		queue => [ @songs ],
+		pointer => 0	# Pointer shows the array index of the current song.
+	};
+	bless($self, $class);
+	$self->load();
+	return $self;
 }
 
 sub load {
- my $self = shift;
- $self->{player}->play($self->{queue}->[$self->{pointer}]);
+	my $self = shift;
+	$self->{player}->play($self->{queue}->[$self->{pointer}]);
 }
 
 sub add {
- my $self = shift;
- my @songs = @_;
- push @{$self->{queue}}, @songs;
+	my $self = shift;
+	my @songs = @_;
+	push @{ $self->{queue} }, @songs;
+}
+
+sub insert {
+	my $self = shift;
+	my @songs = @_;
+	splice(@{ $self->{queue} }, $self->{pointer} + 1, 0, @songs);
 }
 
 sub next {
- my $self = shift;
- $self->{pointer}++;
- if ($self->{pointer} > $#{$self->{queue}}) {
-  $self->stop();
- } else {
-  $self->load();
- }
+	my $self = shift;
+	$self->{pointer}++;
+	if ($self->{pointer} > $#{ $self->{queue} }) {
+		$self->stop();
+	} else {
+		$self->load();
+	}
 }
 
 sub prev {
- my $self = shift;
- $self->{pointer}--;
- $self->stop() if ( $self->{pointer} < 0 );
- $self->load();
+	my $self = shift;
+	$self->{pointer}--;
+	if ($self->{pointer} < 0) {
+		$self->stop();
+	} else {
+		$self->load();
+	}
 }
 
 sub pause {
- my $self = shift;
- $self->{player}->pause();
+	my $self = shift;
+	$self->{player}->pause();
 }
 
 sub resume {
- my $self = shift;
- $self->{player}->resume();
+	my $self = shift;
+	$self->{player}->resume();
 }
 
 sub toggle {
- my $self = shift;
- $self->{player}->toggle();
+	my $self = shift;
+	$self->{player}->toggle();
 }
 
 sub restart {
- my $self = shift;
- $self->{player}->seek(undef, 0);
+	my $self = shift;
+	$self->{player}->seek(undef, 0);
 }
 
 sub forward {
- my $self = shift;
- my $seconds = shift;
- $self->{player}->seek("+", $seconds);
+	my $self = shift;
+	my $seconds = shift;
+	$self->{player}->seek("+", $seconds);
 }
 
 sub backward {
- my $self = shift;
- my $seconds = shift;
- $self->{player}->seek("-", $seconds);
+	my $self = shift;
+	my $seconds = shift;
+	$self->{player}->seek("-", $seconds);
 }
-
-sub stop {
- my $self = shift;
- $self->{player}->stop();
-}
-
-1;
-
-__END__
 
 =head1 NAME
 
@@ -100,12 +99,12 @@ Audio::Daemon::MPG321 - A song queue daemon for Audio::Play::MPG321.
 
 =head1 SYNOPSIS
 
-  use Audio::Daemon::MPG321;
-  my $player = new Audio::Daemon::MPG321 ("/home/dabreegster/mp3/foo.mp3",
-                                          "/home/dabreegster/mp3/bar.mp3");
+use Audio::Daemon::MPG321;
+my $player = new Audio::Daemon::MPG321 ("/home/dabreegster/foo.mp3",
+										"/home/dabreegster/bar.mp3");
 
 $SIG{CHLD} = 'IGNORE';
-$player->add("/home/dabreegster/mp3/blah.mp3");
+$player->add("/home/dabreegster/blah.mp3");
 
 while (1) {
  until ($player->{player}->state() == 0) {
@@ -114,7 +113,7 @@ while (1) {
  }
  $player->{pointer}++;
  unless ($player->{queue}->[$player->{pointer}]) {
-  exit 1;
+  exit 0;
  } else {
   $player->load();
  }
@@ -127,7 +126,7 @@ a song queue. You can build a simple queue of songs and move between them.
 
 Note the infinite loop in the synopsis. You must put this in your program or
 the queue won't work! All it does is keep Audio::Play::MPG321's knowledge of
-the state of the player fresh and continously test to see if one song is over
+the state of the player fresh and continously tests to see if one song is over
 so the next can be loaded. The code is kept out of the module itself because
 this process must be done, one way or the other, and forking in the module
 itself is very messy. The example loop will work fine and you may modify it any
@@ -136,8 +135,6 @@ player, test to see if the song is finished yet, and load the next song in the
 queue (If there is one!) when it is time to do so.
 
 =head2 METHODS
-
-=over 4
 
 =item new
 
@@ -154,6 +151,10 @@ is defined by the pointer.
 =item add
 
 This takes a list of songs to be added to the end of the queue.
+
+=item insert
+
+This takes a list of songs to be spliced in the queue after the current song.
 
 =item next
 
@@ -191,7 +192,7 @@ you try to advance beyond the song, the state will change to 0.
 
 This takes one argument: The number of seconds to skip backwards within the
 song. If you try to advance to a time before the song, it will act as if
-restart() had been called.
+restart() had been called. This is the default MPG321 behavior.
 
 =item stop
 
